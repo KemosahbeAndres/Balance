@@ -20,29 +20,48 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kemosahbe.balance.Activitys.FormularioRegister;
 import com.kemosahbe.balance.CustomViews.NoScrollListView;
+import com.kemosahbe.balance.Fragments.TabCuentas;
+import com.kemosahbe.balance.Fragments.TabMovimientos;
+import com.kemosahbe.balance.Objetos.AdaptadorListaCuentas;
+import com.kemosahbe.balance.Objetos.AdaptadorListaMovimientos;
+import com.kemosahbe.balance.data.*;
+import com.kemosahbe.balance.Objetos.ViewPagerAdapter;
+import com.kemosahbe.balance.data.Transaction;
 
 import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.EventObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MICentralEventListener{
 
-    View item;
-    LayoutInflater inflater;
-    LinearLayout scrollerAvisos;
+    //Definiciones para los eventos de la actividad.
+    private MICentral central;
+    private OnReloadPageEventListener reloadPageListener;
+    private OnSaveTransactionEventListener saveTransactionListener;
+    //public MainActivity activity;
 
+    private View item;
+    private LayoutInflater inflater;
+    private LinearLayout scrollerAvisos;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
-
     private AdaptadorListaCuentas adaptadorCuentas;
     private AdaptadorListaMovimientos adaptadorMovimientos;
     private NoScrollListView listaCuentas, listaMovimientos;
     public String CC[] = {"Efectivo", "Cuenta RUT", "Ahorro Premium"};
-    public ArrayList<Movimiento> mm = new ArrayList<Movimiento>();
+    public ArrayList<Transaction> mm = new ArrayList<>();
+    public ArrayList<ArrayList<String>> matriz = new ArrayList<>();
 
     public Log log;
     private final String TAG = "[MAIN ACTIVITY]";
 
+    @Override
+    public void nothing(CentralEvent event, View view) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,54 +72,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
 
-        Movimiento m = new Movimiento();
-        m.Descripcion="AAA";
-        mm.add(m);
-        m=null;
+        //setReloadPageEventListener(central);
 
-        m = new Movimiento();
-        m.Descripcion="BBB";
-        mm.add(m);
-        m=null;
+        //central.Begin(this);
+        Log.d("MainActivity","Creating DB.");
+        DBController db = DBController.Instance(this);
+        //setupListas();
 
-        m = new Movimiento();
-        m.Descripcion="CCC";
-        mm.add(m);
-        m=null;
-
-        log.d(TAG,"" + mm.get(1).Descripcion);
-
-        setupListas();
-
-        //setupTabs();
-
-        //scrollerAvisos = findViewById(R.id.layoutAvisos);
-        /*LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        //ListView list = findViewById(R.id.listah);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this);
-        //list.setAdapter(adapter);
-        RecyclerView lista = findViewById(R.id.RecyclerList);
-        lista.setLayoutManager(manager);
-        lista.setAdapter(adapter);*/
-
-        /*for(int i=0; i <6; i++) {
-            item = inflater.inflate(R.layout.view_recordatorio, scrollerAvisos, false);
-            item.setId(i);
-            item.setClickable(true);
-            item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(),"Identificador: " + view.getId(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            scrollerAvisos.addView(item);
-        }
-        scrollerAvisos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Identificador: " + view.getId(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
+        //toolbar.setOnMenuItemClickListener(central);
     }
 
     @Override
@@ -135,15 +114,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void setReloadPageEventListener(OnReloadPageEventListener listener){
+        this.reloadPageListener = listener;
+    }
+
     public void setupListas(){
         listaCuentas = (NoScrollListView) findViewById(R.id.listViewCuen);
         listaMovimientos = (NoScrollListView) findViewById(R.id.listViewMov);
         adaptadorCuentas = new AdaptadorListaCuentas(this,CC);
         String lista[] = new String[mm.size()];
         for(int i=0;i==mm.size()-1;i++){
-            lista[i] = mm.get(i).Descripcion;
+            lista[i] = mm.get(i).DESCRIPCION;
         }
-        adaptadorMovimientos = new AdaptadorListaMovimientos(this,mm,lista);
+        //adaptadorMovimientos = new AdaptadorListaMovimientos(this,mm,lista);
         listaCuentas.setAdapter(adaptadorCuentas);
         listaMovimientos.setAdapter(adaptadorMovimientos);
     }
@@ -204,5 +187,47 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+}
+
+
+
+//    ********** INTERFACE LISTENERS **********
+//Interface publica para los listeners del evento recargar pagina.
+interface OnReloadPageEventListener extends EventListener{
+    public void OnReloadPage(ReloadPageEvent event);
+}
+//Interface publica para el listener del evento guardar transaccion.
+interface OnSaveTransactionEventListener extends EventListener{
+    public void OnSaveTransaction(SaveTransactionEvent event);
+}
+interface OnActivityCreatedEventListener extends EventListener{
+    public void OnActivityCreated(ActivityCreatedEvent event);
+}
+
+
+
+//    ********** CLASS EVENT OBJECT **********
+//Clase para los objetos del evento Recargar Pagina.
+class ReloadPageEvent extends EventObject{
+    public final String id = "[Reload Page Event]";
+    public ReloadPageEvent(Object source) { super(source); }
+}
+//Clase para los objetos del evento Guardar Transaccion.
+class SaveTransactionEvent extends EventObject{
+    public final String id = "[Save Transaction Event]";
+    private Transaction transaccion;
+    public SaveTransactionEvent(Object source, Transaction transaction){
+        super(source);
+        this.transaccion = transaction;
+    }
+    public Transaction getTransaction(){
+        return this.transaccion;
+    }
+}
+class ActivityCreatedEvent extends EventObject{
+    public final String id = "[Activity Created Event]";
+    public ActivityCreatedEvent(Object source){
+        super(source);
     }
 }

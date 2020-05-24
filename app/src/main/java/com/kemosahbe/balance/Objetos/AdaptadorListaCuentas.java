@@ -1,4 +1,4 @@
-package com.kemosahbe.balance;
+package com.kemosahbe.balance.Objetos;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.kemosahbe.balance.R;
+
 public class AdaptadorListaCuentas extends ArrayAdapter<String> {
     private Context context;
     private String Titulos[];
@@ -17,7 +19,7 @@ public class AdaptadorListaCuentas extends ArrayAdapter<String> {
     private final String TAG = "[ACCOUNT ADAPTER]";
 
     public AdaptadorListaCuentas(@NonNull Context context, @NonNull String titulos[]) {
-        super(context,R.layout.view_cuentas,R.id.Titulo_Cuenta,titulos);
+        super(context, R.layout.view_cuentas,R.id.Titulo_Cuenta,titulos);
         this.context = context;
         this.Titulos = titulos;
     }

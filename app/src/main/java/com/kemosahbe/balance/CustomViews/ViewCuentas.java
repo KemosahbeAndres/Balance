@@ -1,4 +1,4 @@
-package com.kemosahbe.balance;
+package com.kemosahbe.balance.CustomViews;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

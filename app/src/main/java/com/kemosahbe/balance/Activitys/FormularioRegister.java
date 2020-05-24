@@ -1,4 +1,4 @@
-package com.kemosahbe.balance;
+package com.kemosahbe.balance.Activitys;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.kemosahbe.balance.R;
 
 public class FormularioRegister extends AppCompatActivity {
 

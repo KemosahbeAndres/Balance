@@ -1,4 +1,4 @@
-package com.kemosahbe.balance;
+package com.kemosahbe.balance.Fragments;
 
 
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.kemosahbe.balance.R;
 
 import java.util.jar.Attributes;
 
